@@ -27,18 +27,29 @@ export default class App extends Component {
     let lastAction = this.gameHistory.pop();
     let selections = this.state.selections;
     selections[lastAction.x][lastAction.y] = 0;
+    this.swapPlayer();
+    let playerWon = this.evaluate(selections)?this.currentPlayer:-1;
+    let gameOver = this.gameHistory.length === 9;
+    if(gameOver && playerWon <0){
+      playerWon=0;
+    }
     this.setState(
-      {selections : selections}, this.swapPlayer()
+      {selections : selections, playerWon: playerWon}
     );
   }
 
   selectCell(x,y){
-    alert(this.shoudCheckDiagonal(x,y));
     let selections = this.state.selections;
     selections[x][y] = this.currentPlayer;
     this.gameHistory.push({player: this.currentPlayer, x:x, y:y});
+    let playerWon = this.evaluate(selections)?this.currentPlayer:-1;
+    let gameOver = this.gameHistory.length === 9;
+    if(gameOver && playerWon <0){
+      playerWon=0;
+    }
+    this.swapPlayer();
     this.setState(
-        {selections : selections}, this.swapPlayer()
+        {selections : selections, playerWon: playerWon}
     );   
   }
 
@@ -46,18 +57,41 @@ export default class App extends Component {
     this.currentPlayer = this.currentPlayer===1?2:1;
   }
 
-  evaluate(x , y) {
-    
-  }
-
-  shoudCheckDiagonal(x, y){
-    return((x-y)%2 === 0 );
+  evaluate(selections) {
+    for(let i =0; i< 3; i++){
+      if((selections[i][0] === selections[i][1]) && (selections[i][0] === selections[i][2])){
+        if(selections[i][0] !== 0)
+          return true;
+        
+      }
+      if((selections[0][i] === selections[1][i]) && (selections[0][i] === selections[2][i])){
+        if(selections[0][i] !== 0)
+          return true;
+      }
+    }
+    if((selections[0][0] === selections[1][1]) && (selections[0][0] === selections[2][2])){
+      if(selections[0][0] !== 0)
+        return true;
+    }
+    if((selections[0][2] === selections[1][1]) && (selections[0][2] === selections[2][0])){
+      if(selections[0][2] !== 0)
+        return true;
+    }
   }
 
   render() {
+    let message = `Your turn - Player${this.currentPlayer}`;
+    if(this.state.playerWon === 0 ){
+      message = "The game is Tied";
+    }
+
+    if(this.state.playerWon > 0 ){
+      message = `GAME WON BY - Player${this.state.playerWon}`
+    }
+    
     return (
       <div className="App">
-            <span><h2>Your turn - Player{this.currentPlayer}</h2></span>
+            <span><h2>{message}</h2></span>
             <button onClick={()=>{if(window.confirm("You are about to reset the game!"))this.reset();}}>Reset</button>
             &nbsp;{this.gameHistory.length > 0 ? <button onClick={()=>this.undo()}>Undo</button>:''}
             <br/><br/>
