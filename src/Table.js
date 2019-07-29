@@ -2,11 +2,7 @@ import React, {Component} from 'react';
 import Cell from './Cell';
 import './Table.css';
 
-export default class Table extends Component {
-  constructor(props){
-    super(props);
-  }
-  
+export default class Table extends Component {  
   render() {
     return (
       <div className="Table">

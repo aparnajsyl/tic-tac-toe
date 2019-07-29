@@ -1,10 +1,6 @@
 import React, {Component} from 'react';
 
 export default class Table extends Component {
-  constructor(props){
-    super(props);
-  }
-
   render() {
     let cellValue =  this.props.playerNumber===0?'':this.props.playerNumber===1?'X':'O';
     let clickable = this.props.playerNumber===0?'Clickable':'';
